@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const SalesforceChat = () => {
+const SalesforceChat = ({ isOpen }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     const initESW = (gslbBaseURL) => {
-      window.embedded_svc.settings.displayHelpButton = true;
+      window.embedded_svc.settings.displayHelpButton = false; // Hide default button
       window.embedded_svc.settings.language = '';
       
       window.embedded_svc.settings.enabledFeatures = ['LiveAgent'];
@@ -24,6 +26,8 @@ const SalesforceChat = () => {
           isOfflineSupportEnabled: false
         }
       );
+
+      setIsLoaded(true);
     };
 
     if (!window.embedded_svc) {
@@ -43,6 +47,12 @@ const SalesforceChat = () => {
       initESW('https://service.force.com');
     }
   }, []);
+
+  useEffect(() => {
+    if (isLoaded && isOpen && window.embedded_svc) {
+      window.embedded_svc.bootstrapEmbeddedService();
+    }
+  }, [isLoaded, isOpen]);
 
   return (
     <>
