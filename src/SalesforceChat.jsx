@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 
 const SalesforceChat = ({ isOpen }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const initESW = (gslbBaseURL) => {
-      window.embedded_svc.settings.displayHelpButton = false; // Hide default button
+      window.embedded_svc.settings.displayHelpButton = false;
       window.embedded_svc.settings.language = '';
       
       window.embedded_svc.settings.enabledFeatures = ['LiveAgent'];
@@ -50,7 +51,10 @@ const SalesforceChat = ({ isOpen }) => {
 
   useEffect(() => {
     if (isLoaded && isOpen && window.embedded_svc) {
+      setIsLoading(true);
       window.embedded_svc.bootstrapEmbeddedService();
+      // Assuming the chat is fully loaded after bootstrap, we can set a timeout or listen for an event
+      setTimeout(() => setIsLoading(false), 6000); // Adjust timeout based on observed delay
     }
   }, [isLoaded, isOpen]);
 
@@ -67,6 +71,20 @@ const SalesforceChat = ({ isOpen }) => {
           }
         `}
       </style>
+      {isLoading && (
+        <div style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          padding: '10px',
+          borderRadius: '4px',
+          zIndex: 1000
+        }}>
+          Loading Chat...
+        </div>
+      )}
     </>
   );
 };
